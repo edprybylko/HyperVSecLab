@@ -1,12 +1,8 @@
 # 🧪 HyperVSecLab
-
 **Disposable, isolated security lab for Windows 11 using Hyper-V**  
 Inspired by Qubes OS, purpose-built for analysts and malware researchers.
-
 ---
-
 ## 🚀 Features
-
 - 🔐 WireGuard-based network isolation
 - 🧱 Disposable `inspect-vm` for malware/PDF/DOCX analysis
 - 🌐 Persistent `net-vm` with Suricata & Nessus
@@ -19,46 +15,16 @@ Inspired by Qubes OS, purpose-built for analysts and malware researchers.
   - VPN tunnel and rules
   - Secure session wipe
 - 🧭 Windows-native: integrates into Hyper-V, Start Menu, and PowerShell
-
 ---
-
 ## 💾 Requirements
-
 - Windows 11 Pro/Enterprise
 - Hyper-V enabled
 - PowerShell 5.1+
 - ~20 GB disk space
 - Internet access (or local ISO)
-
 Optional:
 - `sdelete64.exe` in `C:\Tools` (for secure sandbox disk wiping)
-
 ---
-
-## ⚙️ Setup Instructions
-
-### 1. Build a Base VM (Inspect or Net)
-
-```powershell
-cd C:\HyperVSecLab\scripts
-.\build-vm.ps1
-```
-
----
-
-## 💾 Requirements
-
-- Windows 11 Pro/Enterprise
-- Hyper-V enabled
-- PowerShell 5.1+
-- ~20 GB disk space
-- Internet access (or local ISO)
-
-Optional:
-- `sdelete64.exe` in `C:\Tools` (for secure sandbox disk wiping)
-
----
-
 ## ⚙️ Setup Instructions
 ### 1. Build a Base VM (Inspect or Net)
 ```powershell
