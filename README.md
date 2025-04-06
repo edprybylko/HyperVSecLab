@@ -26,7 +26,7 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 - Windows 11 Pro or Enterprise with **Hyper-V enabled**
 - At least 8–16 GB RAM
 - Admin PowerShell
-- **Xubuntu ISOs**:
+- **Virtual Machine ISOs**:
   - [Xubuntu Desktop ISO (for inspect-vm)](https://cdimage.ubuntu.com/xubuntu/releases/)
   - [Uubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
 
