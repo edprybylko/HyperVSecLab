@@ -38,17 +38,19 @@ cd C:\HyperVSecLab\scripts
   - Provide custom ISO URL
 - VM + base `.vhdx` created in `/VMs`
 - `transfer-config.vhdx` is auto-created & populated
-- If `inspect-vm`, a transfer-sandbox.vhdx is also created
+- If `inspect-vm`, a `transfer-sandbox.vhdx` is also created
+
 ➡ Boot the VM, complete the OS install, then shut it down and rename it:
 - `inspect-vm` → for disposable analysis
 - `net-vm` → for routing, VPN, Suricata, and Nessus
 
-### 2. Provision net-vm
+### 2. Provision `net-vm`
 ```powershell
 .\setup-netvm.ps1
 ```
 - Attaches `transfer-config.vhdx` to `net-vm`
 - Calls `enable-netvm-autostart.ps1` to boot on host startup
+
 Inside `net-vm`:
 ```bash
 sudo mount /dev/sdX1 /media/config
@@ -61,12 +63,14 @@ sudo bash export-client-config.sh  # Create inspect-vm, winhost, mobile configs
 ```powershell
 .\new-labsession.ps1
 ```
-#### Creates new inspect-vm using differencing disk
- Attaches:
-- `transfer-config.vhdx` (read/write)
-- `transfer-sandbox.vhdx` (read-only)
-Optionally installs shortcuts to Start Menu and Desktop
-➡ Now open suspicious files inside inspect-vm safely.
+- Creates new inspect-vm using differencing disk
+- Attaches:
+  - `transfer-config.vhdx` (read/write)
+  - `transfer-sandbox.vhdx` (read-only)
+- Optionally installs shortcuts to Start Menu and Desktop
+
+➡ Now open suspicious files inside `inspect-vm` safely.
+
 ---
 ## 🔒 Secure VPN Tunnels
 - VPN client configs generated in `/clients`:
@@ -96,8 +100,10 @@ Includes rules for:
 - Suspicious file downloads
 - C2 beaconing patterns
 - TLS certificate anomalies
+  
 Custom rules located at:
 `net-vm/etc/suricata/hypervseclab.rules`
+
 ---
 ## 🧑‍💻 License
 ### Business Source License 1.1
