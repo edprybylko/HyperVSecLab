@@ -36,13 +36,51 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 
 ```plaintext
 C:\HyperVSecLab\
-├── VMs\                      # VHDX files: base, transfer, sessions
-├── scripts\                 # PowerShell automation scripts
-├── inspect-vm\             # Linux-side install script
-├── net-vm\                 # VPN, IDS, and proxy setup
-├── transfer\               # Transfer VHD creation
-├── windows-host\           # Toast alert listener (optional)
+├── VMs\                         # VHDX disks for Hyper-V
+│   ├── xubuntu-base.vhdx            # Base image for inspect-vm
+│   ├── net-vm-base.vhdx             # Base image for net-vm
+│   ├── inspect-session.vhdx         # Differencing disk (disposable)
+│   ├── transfer.vhdx                # Shared file ingestion disk
+│
+├── scripts\                    # Windows host PowerShell scripts
+│   ├── create-base-vm.ps1
+│   ├── create-transfer-vhd.ps1
+│   ├── create-diff-inspect-vm.ps1
+│   ├── cleanup-disposable-vm.ps1
+│   ├── check-netvm-status.ps1
+│   ├── configure-netvm-network.ps1
+│   ├── enable-netvm-autostart.ps1
+│   ├── setup-netvm.ps1
+│   ├── new-labsession.ps1
+│
+├── net-vm\                     # Inside net-vm (VPN server + alerts)
+│   ├── wireguard-setup.sh
+│   ├── wireguard-healthcheck.sh
+│   ├── export-client-config.sh
+│   ├── wg0.conf                     # WG server config
+│   ├── server_private.key           # WG server private key
+│   ├── server_public.key            # WG server public key
+│   ├── clients\                     # Generated client configs
+│   │   ├── inspect01.conf
+│   │   ├── inspect01.mobile.conf
+│   │   ├── winhost.windows.conf
+│
+├── inspect-vm\                 # Inside disposable inspect-vm
+│   └── install-analysis-tools.sh    # Installs forensic tools
+│
+├── transfer\                   # Mounted into inspect-vm (read-only)
+│   └── *.conf                        # WG client configs auto-copied here
+│
+├── windows-host\               # Runs on host for alert reception
+│   └── toast-listener.ps1           # Receives & displays net-vm alerts
+│
+├── docs\                       # Optional documentation
+│   └── README.md                    # Project overview and usage
+│
+├── LICENSE                     # Business Source License 1.1
+├── .gitignore
 └── README.md
+
 ```
 ---
 
