@@ -74,10 +74,15 @@ sudo bash export-client-config.sh  # Create inspect-vm, winhost, mobile configs
 ---
 ## 🔒 Secure VPN Tunnels
 - VPN client configs generated in `/clients`:
-### Client	File	Usage
-- inspect-vm	`inspect01.conf`	/etc/wireguard/ inside VM
-- Windows host	`winhost.conf`	Import to WireGuard for Windows
-- Mobile	`mobile.conf`	Scan QR in WireGuard mobile app
+
+**Client**	    **File**            **Usage**
+
+inspect-vm      `inspect01.conf`    /etc/wireguard/ inside VM
+
+Windows host	  `winhost.conf`      Import to WireGuard for Windows
+
+Mobile          `mobile.conf`       Scan QR in WireGuard mobile app
+
 ---
 ## 🧼 Wipe Session or Full Lab
 ```powershell
