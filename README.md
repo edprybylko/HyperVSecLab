@@ -1,112 +1,143 @@
 # 🧪 HyperVSecLab
 
-**Qubes-like disposable security lab for Windows 11+**  
-Leverages Hyper-V, WireGuard, and automation to create secure, repeatable sandboxing environments for analyzing potentially malicious files.
+**Disposable, isolated security lab for Windows 11 using Hyper-V**  
+Inspired by Qubes OS, purpose-built for analysts and malware researchers.
 
 ---
 
-## 📦 Features
+## 🚀 Features
 
-- 🧱 Disposable `inspect-vm` (Xubuntu-based) for isolated file analysis
-- 🔐 Persistent `net-vm` acting as:
-  - WireGuard VPN server
-  - Intrusion Detection System (Suricata/Nessus)
-- 💽 Dual shared disks:
-  - `transfer-config.vhdx` (512MB) — safe configs/scripts
-  - `transfer-sandbox.vhdx` (5GB) — suspicious payloads
-- 📤 Secure communication to host using Windows toast notifications
-- 🔁 Automatic snapshotting, cleanup, and launcher integration
-- 🧹 One-command cleanup for session or full lab wipe
-- 📎 Desktop & Start Menu shortcuts with `.bat` launchers
-
----
-
-## 🚀 Quick Start
-
-### 1. 📥 Prerequisites
-
-- ✅ Windows 11 Pro / Enterprise (Hyper-V enabled)
-- ✅ WireGuard installed inside `net-vm`
-- ✅ PowerShell 5.1+
-- ✅ [Sysinternals `sdelete64.exe`](https://docs.microsoft.com/en-us/sysinternals/downloads/sdelete) at `C:\Tools\sdelete64.exe`
+- 🔐 WireGuard-based network isolation
+- 🧱 Disposable `inspect-vm` for malware/PDF/DOCX analysis
+- 🌐 Persistent `net-vm` with Suricata & Nessus
+- 💾 Dual transfer disks:
+  - `transfer-config.vhdx` for provisioning
+  - `transfer-sandbox.vhdx` for dangerous files (read-only)
+- 🔁 Fully automated:
+  - VM provisioning
+  - Config disk population
+  - VPN tunnel and rules
+  - Secure session wipe
+- 🧭 Windows-native: integrates into Hyper-V, Start Menu, and PowerShell
 
 ---
 
-### 2. 📦 Install + Initialize (First Time Only)
+## 💾 Requirements
+
+- Windows 11 Pro/Enterprise
+- Hyper-V enabled
+- PowerShell 5.1+
+- ~20 GB disk space
+- Internet access (or local ISO)
+
+Optional:
+- `sdelete64.exe` in `C:\Tools` (for secure sandbox disk wiping)
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Build a Base VM (Inspect or Net)
 
 ```powershell
 cd C:\HyperVSecLab\scripts
-
-# Create shared disks
-.\create-transfer-config-vhd.ps1
-.\create-transfer-sandbox-vhd.ps1
-
-# Setup net-vm
-.\setup-netvm.ps1
-
-# Optional: create desktop/start menu launchers
-.\install-launchers.ps1
+.\build-vm.ps1
 ```
 
-### 3. 🔬 Daily Usage
-Start a disposable inspect-vm session:
+---
+
+## 💾 Requirements
+
+- Windows 11 Pro/Enterprise
+- Hyper-V enabled
+- PowerShell 5.1+
+- ~20 GB disk space
+- Internet access (or local ISO)
+
+Optional:
+- `sdelete64.exe` in `C:\Tools` (for secure sandbox disk wiping)
+
+---
+
+## ⚙️ Setup Instructions
+### 1. Build a Base VM (Inspect or Net)
+```powershell
+cd C:\HyperVSecLab\scripts
+.\build-vm.ps1
+```
+Select VM type: `inspect-vm` or `net-vm`
+Choose ISO:
+- Auto-detect from `/isos`
+- Download default (Xubuntu or Ubuntu Server)
+- Provide custom ISO URL
+VM + base `.vhdx` created in `/VMs`
+ `transfer-config.vhdx` is auto-created & populated
+If `inspect-vm`, a transfer-sandbox.vhdx is also created
+
+➡ Boot the VM, complete the OS install, then shut it down and rename it:
+- `inspect-vm` → for disposable analysis
+- `net-vm` → for routing, VPN, Suricata, and Nessus
+
+### 2. Provision net-vm
+```powershell
+.\setup-netvm.ps1
+```
+- Attaches `transfer-config.vhdx` to `net-vm`
+- Calls `enable-netvm-autostart.ps1` to boot on host startup
+Inside `net-vm`:
+```bash
+sudo mount /dev/sdX1 /media/config
+cd /media/config
+sudo bash install.sh             # Install Suricata, WireGuard, NAT
+sudo bash init-wireguard.sh     # Generate wg0.conf and keys
+sudo bash export-client-config.sh  # Create inspect-vm, winhost, mobile configs
+```
+### 3. Launch Inspect Session (Disposable)
 ```powershell
 .\new-labsession.ps1
 ```
-🟢 This will:
-Create a differencing disk
-Launch inspect-vm from xubuntu-base.vhdx
-Mount:
-transfer-config.vhdx (RW)
-transfer-sandbox.vhdx (RO)
-Analyze files in a fully isolated environment.
-
-### 4. 🧼 Cleanup Options
-Action	Command
-🔁 Clean disposable session	
+#### Creates new inspect-vm using differencing disk
+ Attaches:
+- `transfer-config.vhdx` (read/write)
+- `transfer-sandbox.vhdx` (read-only)
+Optionally installs shortcuts to Start Menu and Desktop
+➡ Now open suspicious files inside inspect-vm safely.
+---
+## 🔒 Secure VPN Tunnels
+- VPN client configs generated in `/clients`:
+### Client	File	Usage
+- inspect-vm	`inspect01.conf`	/etc/wireguard/ inside VM
+- Windows host	`winhost.conf`	Import to WireGuard for Windows
+- Mobile	`mobile.conf`	Scan QR in WireGuard mobile app
+---
+## 🧼 Wipe Session or Full Lab
 ```powershell
 .\burn-lab.ps1 -Mode session
 ```
-🔥 Reset entire system state (keep project files)	
+- Deletes `inspect-vm`
+- Optionally wipes sandbox disk with `sdelete64.exe`
 ```powershell
 .\burn-lab.ps1 -Mode all
 ```
-🖥️ GUI Integration
-Installed by:
-```powershell
-.\install-launchers.ps1
-```
-
-### Shortcut	Location
-🧪 Start Lab Session	Start Menu + Desktop
-🧹 Burn Lab Session	Start Menu + Desktop
-🔥 Burn Full Lab	Start Menu + Desktop
-📁 Repo Structure (Summary)
-```graphql
-C:\HyperVSecLab\
-├── VMs\                          # VHDX disks (base + transfer)
-├── scripts\                      # PowerShell automation
-├── net-vm\                       # WireGuard server & health scripts
-├── inspect-vm\                   # Sandbox forensic tooling
-├── windows-host\                 # Toast listener
-├── launchers\                    # .bat files for GUI launch
-├── transfer\                     # WG client configs copied from net-vm
-├── LICENSE, README.md, .gitignore
-```
-
-## 🔒 Security Model
-Component	Purpose
-net-vm	VPN tunnel, IDS, host traffic proxying
-inspect-vm	Disposable sandbox (clean every session)
-transfer-config.vhdx	Safe disk for scripts, configs
-transfer-sandbox.vhdx	Isolated RO disk for malware
-burn-lab.ps1	Controlled wipe of VMs and disks
-wireguard-healthcheck.sh	Detects tunnel failures + notifies host
-
-
+- Deletes all VMs
+- Removes transfer disks
+- Cleans up virtual switches
+- Removes desktop/start menu shortcuts
+---
+## 🔍 Suricata Detection Rules
+Includes rules for:
+- DNS hijacking
+- ARP spoofing
+- Suspicious file downloads
+- C2 beaconing patterns
+- TLS certificate anomalies
+Custom rules located at:
+`net-vm/etc/suricata/hypervseclab.rules`
+---
 ## 🧑‍💻 License
-Licensed under the Business Source License 1.1 (BSL-1.1).
-Non-commercial use only until Change Date: 2028-04-05.
-
+### Business Source License 1.1
+- Change Date: 2028-04-05
+- See LICENSE for full terms
+---
 ## 🤝 Credits
-Project inspired by Qubes OS — reimagined for Windows-native workflows.
+Inspired by the modular isolation principles of `Qubes OS`
