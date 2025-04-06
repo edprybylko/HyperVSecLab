@@ -31,15 +31,14 @@ Optional:
 cd C:\HyperVSecLab\scripts
 .\build-vm.ps1
 ```
-Select VM type: `inspect-vm` or `net-vm`
-Choose ISO:
-- Auto-detect from `/isos`
-- Download default (Xubuntu or Ubuntu Server)
-- Provide custom ISO URL
-VM + base `.vhdx` created in `/VMs`
- `transfer-config.vhdx` is auto-created & populated
-If `inspect-vm`, a transfer-sandbox.vhdx is also created
-
+- Select VM type: `inspect-vm` or `net-vm`
+- Choose ISO:
+  - Auto-detect from `/isos`
+  - Download default (Xubuntu or Ubuntu Server)
+  - Provide custom ISO URL
+- VM + base `.vhdx` created in `/VMs`
+- `transfer-config.vhdx` is auto-created & populated
+- If `inspect-vm`, a transfer-sandbox.vhdx is also created
 ➡ Boot the VM, complete the OS install, then shut it down and rename it:
 - `inspect-vm` → for disposable analysis
 - `net-vm` → for routing, VPN, Suricata, and Nessus
