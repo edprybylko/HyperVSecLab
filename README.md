@@ -15,7 +15,7 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 
 - 🔒 **Disposable inspect-vm** with forensic tools pre-installed
 - 💾 **Isolated transfer.vhdx** shared between host and VM (read-only)
-- 📡 **net-vm** with IDS (Suricata), VPN support, and optional proxy
+- 📡 **net-vm** with VPN support, Squid proxy, IDS (Suricata), and vulnerability scanning (Nessus)
 - 🧪 Scripts to automate VM creation, teardown, session launch, and **real-time notifications**
 - ⚡ Runs entirely on Hyper-V with no 3rd-party dependencies
 
