@@ -16,7 +16,7 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 - 🔒 **Disposable inspect-vm** with forensic tools pre-installed
 - 💾 **Isolated transfer.vhdx** shared between host and VM (read-only)
 - 📡 **net-vm** with IDS (Suricata), VPN support, and optional proxy
-- 🧪 Scripts to automate VM creation, teardown, and session launch
+- 🧪 Scripts to automate VM creation, teardown, session launch, and real-time notifications
 - ⚡ Runs entirely on Hyper-V with no 3rd-party dependencies
 
 ---
@@ -28,7 +28,7 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 - Admin PowerShell
 - **Xubuntu ISOs**:
   - [Xubuntu Desktop ISO (for inspect-vm)](https://cdimage.ubuntu.com/xubuntu/releases/)
-  - [Xubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
+  - [Uubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
 
 ---
 
