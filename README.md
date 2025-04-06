@@ -1,138 +1,108 @@
-# 🛡️ HyperVSecLab
+# 🧪 HyperVSecLab
 
-**HyperVSecLab** is a modular, disposable, and automated malware analysis lab built on **Hyper-V** for Windows 11.
-
-It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files in an **isolated virtual environment**, with full support for:
-- Disposable analysis VMs (inspect-vm)
-- Secure file transfer via VHDX (no shared folders)
-- Suricata/Nessus monitoring via a hardened `net-vm`
-- VPN tunneling, proxy control, and threat detection
-- One-click lab automation with PowerShell
+**Qubes-like disposable security lab for Windows 11+**  
+Leverages Hyper-V, WireGuard, and automation to create secure, repeatable sandboxing environments for analyzing potentially malicious files.
 
 ---
 
-## 🧰 Features
+## 📦 Features
 
-- 🔒 **Disposable inspect-vm** with forensic tools pre-installed
-- 💾 **Isolated transfer.vhdx** shared between host and VM (read-only)
-- 📡 **net-vm** with Wireguard, IDS (Suricata), and vulnerability scanning (Nessus)
-- 🧪 Scripts to automate VM creation, teardown, session launch, and **real-time notifications**
-- ⚡ Runs entirely on Hyper-V
-
----
-
-## 📥 Requirements
-
-- Windows 11 Pro or Enterprise with **Hyper-V enabled**
-- At least 8–16 GB RAM
-- Admin PowerShell
-- **Virtual Machine ISOs**:
-  - [Xubuntu Desktop ISO (for inspect-vm)](https://cdimage.ubuntu.com/xubuntu/releases/)
-  - [Ubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
+- 🧱 Disposable `inspect-vm` (Xubuntu-based) for isolated file analysis
+- 🔐 Persistent `net-vm` acting as:
+  - WireGuard VPN server
+  - Intrusion Detection System (Suricata/Nessus optional)
+- 💽 Dual shared disks:
+  - `transfer-config.vhdx` (512MB) — safe configs/scripts
+  - `transfer-sandbox.vhdx` (5GB) — suspicious payloads
+- 📤 Secure communication to host using Windows toast notifications
+- 🔁 Automatic snapshotting, cleanup, and launcher integration
+- 🧹 One-command cleanup for session or full lab wipe
+- 📎 Desktop & Start Menu shortcuts with `.bat` launchers
 
 ---
 
-## 🧱 Folder Structure
+## 🚀 Quick Start
 
-```plaintext
-C:\HyperVSecLab\
-├── VMs\
-│   ├── xubuntu-base.vhdx
-│   ├── net-vm-base.vhdx
-│   ├── inspect-session.vhdx          # Diff-based disposable VM disk
-│   ├── transfer-config.vhdx          # Safe config files (RW)
-│   ├── transfer-sandbox.vhdx         # Suspicious files (R)
-│
-├── scripts\                          # Windows PowerShell automation
-│   ├── create-base-vm.ps1
-│   ├── create-transfer-config-vhd.ps1
-│   ├── create-transfer-sandbox-vhd.ps1
-│   ├── cleanup-disposable-vm.ps1
-│   ├── wipe-sandbox-vhdx.ps1         # Secure erase with sdelete
-│   ├── check-netvm-status.ps1
-│   ├── configure-netvm-network.ps1
-│   ├── enable-netvm-autostart.ps1
-│   ├── setup-netvm.ps1
-│   ├── new-labsession.ps1            # Now mounts both transfer disks
-│
-├── net-vm\
-│   ├── wireguard-setup.sh
-│   ├── wireguard-healthcheck.sh
-│   ├── export-client-config.sh
-│   ├── wg0.conf
-│   ├── server_private.key
-│   ├── server_public.key
-│   ├── clients\
-│   │   ├── inspect01.conf
-│   │   └── winhost.windows.conf
-│
-├── inspect-vm\
-│   └── install-analysis-tools.sh
-│
-├── transfer\
-│   └── (WG client files auto-copied here by export-client-config.sh)
-│
-├── windows-host\
-│   └── toast-listener.ps1
-│
-├── LICENSE
-├── .gitignore
-└── README.md
+### 1. 📥 Prerequisites
 
-```
+- ✅ Windows 11 Pro / Enterprise (Hyper-V enabled)
+- ✅ WireGuard installed inside `net-vm`
+- ✅ PowerShell 5.1+
+- ✅ [Sysinternals `sdelete64.exe`](https://docs.microsoft.com/en-us/sysinternals/downloads/sdelete) at `C:\Tools\sdelete64.exe`
+
 ---
 
-## ⚙️ Setup Guide
-1️⃣ Create Your Base VM
-```
+### 2. 📦 Install + Initialize (First Time Only)
+
+```powershell
 cd C:\HyperVSecLab\scripts
-.\create-base-vm.ps1
-```
-Choose 1 for xubuntu-base (inspect-vm GUI)
-Choose 2 for net-vm-base (minimal CLI)
-After installing Ubuntu manually, shut down VM
-Script will export and snapshot it
 
-2️⃣ Create the Transfer Disk
-```
-cd C:\HyperVSecLab\transfer
-.\create-transfer-vhd.ps1
-```
-Mount the transfer.vhdx
-Copy suspicious files into it (DOCX, PDFs, etc.)
-It will be mounted read-only in the inspect-vm
+# Create shared disks
+.\create-transfer-config-vhd.ps1
+.\create-transfer-sandbox-vhd.ps1
 
-3️⃣ Launch Full Session (Auto)
+# Setup net-vm
+.\setup-netvm.ps1
+
+# Optional: create desktop/start menu launchers
+.\install-launchers.ps1
 ```
-cd C:\HyperVSecLab\scripts
+
+### 3. 🔬 Daily Usage
+Start a disposable inspect-vm session:
+```powershell
 .\new-labsession.ps1
 ```
-This will:
-Start net-vm (or import it if missing)
-Create a disposable inspect-vm from snapshot
-Attach transfer.vhdx
-Start everything for analysis
+🟢 This will:
+Create a differencing disk
+Launch inspect-vm from xubuntu-base.vhdx
+Mount:
+transfer-config.vhdx (RW)
+transfer-sandbox.vhdx (RO)
+Analyze files in a fully isolated environment.
 
-4️⃣ Inside the Inspect VM
-Run the forensic tool installer:
-```
-cd ~/HyperVSecLab/inspect-vm/
-chmod +x install-analysis-tools.sh
-./install-analysis-tools.sh
-```
-Tools:
-libreoffice, oletools, binwalk, clamav, qpdf, steghide, exiftool
+### 4. 🧼 Cleanup Options
+Action	Command
+🔁 Clean disposable session	.\burn-lab.ps1 -Mode session
+🔥 Reset entire system state (keep project files)	.\burn-lab.ps1 -Mode all
+🖥️ GUI Integration
+Installed by:
 
-5️⃣ Cleanup After Use
+```powershell
+.\install-launchers.ps1
 ```
-cd C:\HyperVSecLab\scripts
-.\cleanup-disposable-vm.ps1
-```
-This:
-Deletes the disposable VM
-Removes the inspect-session.vhdx disk
 
-## 🧪 Optional
-Configure net-vm to route traffic via VPN (setup-vpn.sh)
-Enable Suricata for threat detection
-Run toast-listener.ps1 on Windows host to receive live alerts
+### Shortcut	Location
+🧪 Start Lab Session	Start Menu + Desktop
+🧹 Burn Lab Session	Start Menu + Desktop
+🔥 Burn Full Lab	Start Menu + Desktop
+📁 Repo Structure (Summary)
+```graphql
+C:\HyperVSecLab\
+├── VMs\                          # VHDX disks (base + transfer)
+├── scripts\                      # PowerShell automation
+├── net-vm\                       # WireGuard server & health scripts
+├── inspect-vm\                   # Sandbox forensic tooling
+├── windows-host\                 # Toast listener
+├── launchers\                    # .bat files for GUI launch
+├── transfer\                     # WG client configs copied from net-vm
+├── LICENSE, README.md, .gitignore
+```
+
+## 🔒 Security Model
+Component	Purpose
+net-vm	VPN tunnel, IDS, host traffic proxying
+inspect-vm	Disposable sandbox (clean every session)
+transfer-config.vhdx	Safe disk for scripts, configs
+transfer-sandbox.vhdx	Isolated RO disk for malware
+burn-lab.ps1	Controlled wipe of VMs and disks
+wireguard-healthcheck.sh	Detects tunnel failures + notifies host
+
+
+## 🧑‍💻 License
+Licensed under the Business Source License 1.1 (BSL-1.1).
+Non-commercial use only until Change Date: 2028-04-05.
+
+## 🤝 Credits
+Built by edprybylko in collaboration with 🧠 ChatGPT assistant.
+Project inspired by Qubes OS — reimagined for Windows-native workflows.
