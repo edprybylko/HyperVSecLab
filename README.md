@@ -28,7 +28,7 @@ It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files
 - Admin PowerShell
 - **Virtual Machine ISOs**:
   - [Xubuntu Desktop ISO (for inspect-vm)](https://cdimage.ubuntu.com/xubuntu/releases/)
-  - [Uubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
+  - [Ubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
 
 ---
 
