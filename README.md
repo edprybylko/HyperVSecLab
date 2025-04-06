@@ -63,11 +63,16 @@ Analyze files in a fully isolated environment.
 
 ### 4. 🧼 Cleanup Options
 Action	Command
-🔁 Clean disposable session	.\burn-lab.ps1 -Mode session
-🔥 Reset entire system state (keep project files)	.\burn-lab.ps1 -Mode all
+🔁 Clean disposable session	
+```powershell
+.\burn-lab.ps1 -Mode session
+```
+🔥 Reset entire system state (keep project files)	
+```powershell
+.\burn-lab.ps1 -Mode all
+```
 🖥️ GUI Integration
 Installed by:
-
 ```powershell
 .\install-launchers.ps1
 ```
