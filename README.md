@@ -10,7 +10,7 @@ Leverages Hyper-V, WireGuard, and automation to create secure, repeatable sandbo
 - 🧱 Disposable `inspect-vm` (Xubuntu-based) for isolated file analysis
 - 🔐 Persistent `net-vm` acting as:
   - WireGuard VPN server
-  - Intrusion Detection System (Suricata/Nessus optional)
+  - Intrusion Detection System (Suricata/Nessus)
 - 💽 Dual shared disks:
   - `transfer-config.vhdx` (512MB) — safe configs/scripts
   - `transfer-sandbox.vhdx` (5GB) — suspicious payloads
@@ -109,5 +109,4 @@ Licensed under the Business Source License 1.1 (BSL-1.1).
 Non-commercial use only until Change Date: 2028-04-05.
 
 ## 🤝 Credits
-Built by edprybylko in collaboration with 🧠 ChatGPT assistant.
 Project inspired by Qubes OS — reimagined for Windows-native workflows.
