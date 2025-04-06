@@ -43,7 +43,9 @@ C:\HyperVSecLab\
 ├── transfer\               # Transfer VHD creation
 ├── windows-host\           # Toast alert listener (optional)
 └── README.md
-⚙️ Setup Guide
+```
+
+## ⚙️ Setup Guide
 1️⃣ Create Your Base VM
 powershell
 Copy
@@ -111,7 +113,7 @@ Deletes the disposable VM
 
 Removes the inspect-session.vhdx disk
 
-🧪 Optional
+## 🧪 Optional
 Configure net-vm to route traffic via VPN (setup-vpn.sh)
 
 Enable Suricata for threat detection
