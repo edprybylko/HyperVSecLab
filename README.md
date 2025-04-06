@@ -44,78 +44,59 @@ C:\HyperVSecLab\
 ├── windows-host\           # Toast alert listener (optional)
 └── README.md
 ```
+---
 
 ## ⚙️ Setup Guide
 1️⃣ Create Your Base VM
-powershell
-Copy
-Edit
+```
 cd C:\HyperVSecLab\scripts
 .\create-base-vm.ps1
+```
 Choose 1 for xubuntu-base (inspect-vm GUI)
-
 Choose 2 for net-vm-base (minimal CLI)
-
 After installing Ubuntu manually, shut down VM
-
 Script will export and snapshot it
 
 2️⃣ Create the Transfer Disk
-powershell
-Copy
-Edit
+```
 cd C:\HyperVSecLab\transfer
 .\create-transfer-vhd.ps1
+```
 Mount the transfer.vhdx
-
 Copy suspicious files into it (DOCX, PDFs, etc.)
-
 It will be mounted read-only in the inspect-vm
 
 3️⃣ Launch Full Session (Auto)
-powershell
-Copy
-Edit
+```
 cd C:\HyperVSecLab\scripts
 .\new-labsession.ps1
+```
 This will:
-
 Start net-vm (or import it if missing)
-
 Create a disposable inspect-vm from snapshot
-
 Attach transfer.vhdx
-
 Start everything for analysis
 
 4️⃣ Inside the Inspect VM
 Run the forensic tool installer:
-
-bash
-Copy
-Edit
+```
 cd ~/HyperVSecLab/inspect-vm/
 chmod +x install-analysis-tools.sh
 ./install-analysis-tools.sh
+```
 Tools:
-
 libreoffice, oletools, binwalk, clamav, qpdf, steghide, exiftool
 
 5️⃣ Cleanup After Use
-powershell
-Copy
-Edit
+```
 cd C:\HyperVSecLab\scripts
 .\cleanup-disposable-vm.ps1
+```
 This:
-
 Deletes the disposable VM
-
 Removes the inspect-session.vhdx disk
 
 ## 🧪 Optional
 Configure net-vm to route traffic via VPN (setup-vpn.sh)
-
 Enable Suricata for threat detection
-
 Run toast-listener.ps1 on Windows host to receive live alerts
