@@ -1,52 +1,119 @@
 # 🛡️ HyperVSecLab
 
-**HyperVSecLab** is a modular, automated security lab built on **Hyper-V** for analyzing suspicious files (like DOCX, PDFs, ZIPs), isolating malware in disposable VMs, and inspecting traffic through a hardened Linux gateway.
+**HyperVSecLab** is a modular, disposable, and automated malware analysis lab built on **Hyper-V** for Windows 11.
 
-> Built for defenders, researchers, and tinkerers who want a personal sandbox with IDS, VPN, and forensic tools — without needing Qubes OS or a second physical machine.
+It allows you to safely open and inspect suspicious DOCX, PDF, ZIP, or EXE files in an **isolated virtual environment**, with full support for:
+- Disposable analysis VMs (inspect-vm)
+- Secure file transfer via VHDX (no shared folders)
+- Suricata/Nessus monitoring via a hardened `net-vm`
+- VPN tunneling, proxy control, and threat detection
+- One-click lab automation with PowerShell
 
 ---
 
 ## 🧰 Features
 
-- ⚙️ **Disposable VMs** for inspecting malicious documents
-- 🔐 **Isolated file transfer** using read-only VHD (no folder sharing)
-- 🧪 **Forensics tools preinstalled** (oletools, binwalk, clamav, steghide)
-- 📡 **net-vm** with Suricata, Squid proxy, and VPN support
-- 🚀 **Automation scripts** to spin up a lab in seconds
-- 🪟 **Toast notifications** to your Windows host for Suricata or Nessus alerts
+- 🔒 **Disposable inspect-vm** with forensic tools pre-installed
+- 💾 **Isolated transfer.vhdx** shared between host and VM (read-only)
+- 📡 **net-vm** with IDS (Suricata), VPN support, and optional proxy
+- 🧪 Scripts to automate VM creation, teardown, and session launch
+- ⚡ Runs entirely on Hyper-V with no 3rd-party dependencies
 
 ---
 
-## 📥 Quick Start
+## 📥 Requirements
 
-### ✅ 1. Prerequisites
-
-- Windows 11 with **Hyper-V enabled**
-- At least 8 GB RAM (16 GB recommended)
-- Admin PowerShell access
-- [Download Xubuntu 22.04.3 LTS Desktop ISO](https://cdimage.ubuntu.com/xubuntu/releases/22.04.3/release/)
-- (Optional for net-vm) [Download Xubuntu Minimal / Server ISO](https://ubuntu.com/download/server)
+- Windows 11 Pro or Enterprise with **Hyper-V enabled**
+- At least 8–16 GB RAM
+- Admin PowerShell
+- **Xubuntu ISOs**:
+  - [Xubuntu Desktop ISO (for inspect-vm)](https://cdimage.ubuntu.com/xubuntu/releases/)
+  - [Xubuntu Server/Minimal ISO (for net-vm)](https://ubuntu.com/download/server)
 
 ---
 
-## 📁 File Structure
+## 🧱 Folder Structure
 
 ```plaintext
 C:\HyperVSecLab\
-├── VMs\                     # All VM disks live here
-│   ├── xubuntu-base.vhdx
-│   ├── net-vm-base.vhdx
-│   ├── transfer.vhdx
-│
-├── scripts\                # Automation tools
-│   ├── create-base-vm.ps1
-│   ├── create-transfer-vhd.ps1
-│   ├── create-diff-inspect-vm.ps1
-│   ├── clone-vm-from-template.ps1
-│   ├── new-labsession.ps1
-│
-├── inspect-vm\
-│   └── install-analysis-tools.sh
-├── net-vm\
-│   └── setup-vpn.sh, suricata-setup.sh, etc.
-└── ...
+├── VMs\                      # VHDX files: base, transfer, sessions
+├── scripts\                 # PowerShell automation scripts
+├── inspect-vm\             # Linux-side install script
+├── net-vm\                 # VPN, IDS, and proxy setup
+├── transfer\               # Transfer VHD creation
+├── windows-host\           # Toast alert listener (optional)
+└── README.md
+⚙️ Setup Guide
+1️⃣ Create Your Base VM
+powershell
+Copy
+Edit
+cd C:\HyperVSecLab\scripts
+.\create-base-vm.ps1
+Choose 1 for xubuntu-base (inspect-vm GUI)
+
+Choose 2 for net-vm-base (minimal CLI)
+
+After installing Ubuntu manually, shut down VM
+
+Script will export and snapshot it
+
+2️⃣ Create the Transfer Disk
+powershell
+Copy
+Edit
+cd C:\HyperVSecLab\transfer
+.\create-transfer-vhd.ps1
+Mount the transfer.vhdx
+
+Copy suspicious files into it (DOCX, PDFs, etc.)
+
+It will be mounted read-only in the inspect-vm
+
+3️⃣ Launch Full Session (Auto)
+powershell
+Copy
+Edit
+cd C:\HyperVSecLab\scripts
+.\new-labsession.ps1
+This will:
+
+Start net-vm (or import it if missing)
+
+Create a disposable inspect-vm from snapshot
+
+Attach transfer.vhdx
+
+Start everything for analysis
+
+4️⃣ Inside the Inspect VM
+Run the forensic tool installer:
+
+bash
+Copy
+Edit
+cd ~/HyperVSecLab/inspect-vm/
+chmod +x install-analysis-tools.sh
+./install-analysis-tools.sh
+Tools:
+
+libreoffice, oletools, binwalk, clamav, qpdf, steghide, exiftool
+
+5️⃣ Cleanup After Use
+powershell
+Copy
+Edit
+cd C:\HyperVSecLab\scripts
+.\cleanup-disposable-vm.ps1
+This:
+
+Deletes the disposable VM
+
+Removes the inspect-session.vhdx disk
+
+🧪 Optional
+Configure net-vm to route traffic via VPN (setup-vpn.sh)
+
+Enable Suricata for threat detection
+
+Run toast-listener.ps1 on Windows host to receive live alerts
