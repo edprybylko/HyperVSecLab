@@ -38,23 +38,41 @@ With built-in support for Tailscale VPN, you can route your phone's traffic thro
 ### 🧱 REPOSITORY STRUCTURE
 
 C:\HyperVSecLab\
+
 ├── build.ps1                  → Interactive script to build net-vm / inspect-base
+
 ├── new-lab.ps1                → Launches disposable inspect-vm with VHDs
+
 ├── setup.ps1                  → Provisions pfSense net-vm (Suricata, Zeek, Tailscale)
+
 ├── create-transfer.ps1        → Creates and populates transfer.vhdx
+
 ├── burn.ps1                   → Wipes lab session or full net-vm setup
+
 ├── tray-monitor.ps1           → Windows tray icon and state monitor
+
 ├── transfer\
+
 │   ├── config\
+
 │   │   ├── hypervseclab.rules     → Suricata custom rules
+
 │   │   ├── tailscale.zeek         → Zeek detection script for UDP 41641
+
 │   │   ├── netvm-alert-forwarder.sh → Shell watcher to forward alerts
+
 │   │   └── logs\
+
 │   │       ├── suricata\
+
 │   │       ├── zeek\
+
 │   │       └── alerts-summary.txt
+
 ├── isos\
+
 │   ├── netgate-installer-amd64.iso → pfSense ISO
+
 │   └── xubuntu-XX.XX-desktop.iso   → Xubuntu ISO (optional minimal/server)
 
 -----
