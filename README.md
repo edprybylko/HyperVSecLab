@@ -12,13 +12,11 @@ With built-in support for Tailscale VPN, you can route your phone's traffic thro
 
 ### 📦 FEATURES
 
-✓ Disposable inspect-vm for analyzing suspicious files (PDF, DOCX, EXE, etc.)
+✓ Tailscale VPN support for Windows host, guest VMs, and mobile devices — with full routing and traffic monitoring through net-vm
 
 ✓ Persistent net-vm with pfSense + Suricata + Zeek for deep traffic inspection
 
-✓ Tailscale VPN support for remote/mobile devices with subnet routing
-
-✓ Suricata + Zeek detect malicious activity across LAN/VPN
+✓ Disposable inspect-vm for analyzing suspicious files (PDF, DOCX, EXE, etc.)
 
 ✓ Real-time alerts sent to Windows via toast notifications
 
