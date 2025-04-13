@@ -1,119 +1,139 @@
-# 🧪 HyperVSecLab
-**Disposable, isolated security lab for Windows 11 using Hyper-V**  
-Inspired by Qubes OS, purpose-built for analysts and malware researchers.
----
-## 🚀 Features
-- 🔐 WireGuard-based network isolation
-- 🧱 Disposable `inspect-vm` for malware/PDF/DOCX analysis
-- 🌐 Persistent `net-vm` with Suricata & Nessus
-- 💾 Dual transfer disks:
-  - `transfer-config.vhdx` for provisioning
-  - `transfer-sandbox.vhdx` for dangerous files (read-only)
-- 🔁 Fully automated:
-  - VM provisioning
-  - Config disk population
-  - VPN tunnel and rules
-  - Secure session wipe
-- 🧭 Windows-native: integrates into Hyper-V, Start Menu, and PowerShell
----
-## 💾 Requirements
-- Windows 11 Pro/Enterprise
-- Hyper-V enabled
-- PowerShell 5.1+
-- ~20 GB disk space
-- Internet access (or local ISO)
-Optional:
-- `sdelete64.exe` in `C:\Tools` (for secure sandbox disk wiping)
----
-## ⚙️ Setup Instructions
-### 1. Build a Base VM (Inspect or Net)
-```powershell
-cd C:\HyperVSecLab\scripts
-.\build-vm.ps1
-```
-- Select VM type: `inspect-vm` or `net-vm`
-- Choose ISO:
-  - Auto-detect from `/isos`
-  - Download default (Xubuntu or Ubuntu Server)
-  - Provide custom ISO URL
-- VM + base `.vhdx` created in `/VMs`
-- `transfer-config.vhdx` is auto-created & populated
-- If `inspect-vm`, a `transfer-sandbox.vhdx` is also created
 
-➡ Boot the VM, complete the OS install, then shut it down and rename it:
-- `inspect-vm` → for disposable analysis
-- `net-vm` → for routing, VPN, Suricata, and Nessus
+## HyperVSecLab - Disposable Security Lab
 
-### 2. Provision `net-vm`
-```powershell
-.\setup-netvm.ps1
-```
-- Attaches `transfer-config.vhdx` to `net-vm`
-- Calls `enable-netvm-autostart.ps1` to boot on host startup
+A modular, Qubes-inspired virtual lab for Windows 11 using Hyper-V, pfSense, Xubuntu, and Tailscale VPN — designed to sandbox suspicious files, monitor host and mobile network traffic, and forward real-time alerts directly to your Windows desktop.
 
-Inside `net-vm`:
-```bash
-sudo mount /dev/sdX1 /media/config
-cd /media/config
-sudo bash install.sh             # Install Suricata, WireGuard, NAT
-sudo bash init-wireguard.sh     # Generate wg0.conf and keys
-sudo bash export-client-config.sh  # Create inspect-vm, winhost, mobile configs
-```
-### 3. Launch Inspect Session (Disposable)
-```powershell
-.\new-labsession.ps1
-```
-- Creates new inspect-vm using differencing disk
-- Attaches:
-  - `transfer-config.vhdx` (read/write)
-  - `transfer-sandbox.vhdx` (read-only)
-- Optionally installs shortcuts to Start Menu and Desktop
+HyperVSecLab turns your Windows laptop into a personal security operations center (SOC), complete with deep packet inspection, behavioral analysis, and live notifications — no dual-booting required.
 
-➡ Now open suspicious files inside `inspect-vm` safely.
+Built for analysts, homelabbers, and security-conscious users who want hardened isolation, full-device monitoring, and zero-trust network control — even for mobile devices.
 
----
-## 🔒 Secure VPN Tunnels
-- VPN client configs generated in `/clients`:
+With built-in support for Tailscale VPN, you can route your phone's traffic through the lab to detect malware behavior, DNS tunneling, C2 beacons, and more using enterprise-grade tools like Suricata and Zeek.
 
-**Client**	    **File**            **Usage**
 
-inspect-vm      `inspect01.conf`    /etc/wireguard/ inside VM
+### 📦 FEATURES
 
-Windows host	  `winhost.conf`      Import to WireGuard for Windows
+✓ Disposable inspect-vm for analyzing suspicious files (PDF, DOCX, EXE, etc.)
+✓ Persistent net-vm with pfSense + Suricata + Zeek for deep traffic inspection
+✓ Tailscale VPN support for remote/mobile devices with subnet routing
+✓ Suricata + Zeek detect malicious activity across LAN/VPN
+✓ Real-time alerts sent to Windows via toast notifications
+✓ Transfer.vhdx drive auto-syncs logs and config files between host and VMs
+✓ PowerShell-based automation (build, setup, snapshot, destroy)
 
-Mobile          `mobile.conf`       Scan QR in WireGuard mobile app
 
----
-## 🧼 Wipe Session or Full Lab
-```powershell
-.\burn-lab.ps1 -Mode session
-```
-- Deletes `inspect-vm`
-- Optionally wipes sandbox disk with `sdelete64.exe`
-```powershell
-.\burn-lab.ps1 -Mode all
-```
-- Deletes all VMs
-- Removes transfer disks
-- Cleans up virtual switches
-- Removes desktop/start menu shortcuts
----
-## 🔍 Suricata Detection Rules
-Includes rules for:
-- DNS hijacking
-- ARP spoofing
-- Suspicious file downloads
-- C2 beaconing patterns
-- TLS certificate anomalies
-  
-Custom rules located at:
-`net-vm/etc/suricata/hypervseclab.rules`
+### 🧰 SYSTEM REQUIREMENTS
 
----
-## 🧑‍💻 License
-### Business Source License 1.1
-- Change Date: 2028-04-05
-- See LICENSE for full terms
----
-## 🤝 Credits
-Inspired by the modular isolation principles of `Qubes OS`
+- Windows 11 Pro / Enterprise (Hyper-V enabled)
+- Surface Pro 9 or similar device with > 8GB RAM
+- Hyper-V Virtualization enabled in BIOS
+- At least 40 GB of free disk space
+
+### 🧱 REPOSITORY STRUCTURE
+
+C:\HyperVSecLab\
+├── build.ps1                  → Interactive script to build net-vm / inspect-base
+├── new-lab.ps1                → Launches disposable inspect-vm with VHDs
+├── setup.ps1                  → Provisions pfSense net-vm (Suricata, Zeek, Tailscale)
+├── create-transfer.ps1        → Creates and populates transfer.vhdx
+├── burn.ps1                   → Wipes lab session or full net-vm setup
+├── tray-monitor.ps1           → Windows tray icon and state monitor
+├── transfer\
+│   ├── config\
+│   │   ├── hypervseclab.rules     → Suricata custom rules
+│   │   ├── tailscale.zeek         → Zeek detection script for UDP 41641
+│   │   ├── netvm-alert-forwarder.sh → Shell watcher to forward alerts
+│   │   └── logs\
+│   │       ├── suricata\
+│   │       ├── zeek\
+│   │       └── alerts-summary.txt
+├── isos\
+│   ├── netgate-installer-amd64.iso → pfSense ISO
+│   └── xubuntu-XX.XX-desktop.iso   → Xubuntu ISO (optional minimal/server)
+
+### 🧩 REQUIRED DOWNLOADS
+
+1. **PuTTY Tools (plink + pscp)**  
+   Download from: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html  
+   - Required for setup.ps1 SSH automation  
+   - Add `plink.exe` and `pscp.exe` to your system PATH  
+
+2. **pfSense ISO (Net-VM)**
+   Download from: https://www.netgate.com/downloads  
+   - Choose pfSense CE (Community Edition)  
+   - Extract the `.gz` to get the `.iso`  
+
+3. **Xubuntu ISO (Inspect-VM)**
+   Download from: https://xubuntu.org/download/  
+   - You can choose minimal install during setup  
+   - ISO must be placed in the `/isos` folder  
+
+4. **Tailscale Account (Free)**
+   Register at: https://tailscale.com  
+   - Used to connect your devices (mobile, host, net-vm)
+   - Subnet routing enabled through pfSense net-vm
+
+### 🚀 GETTING STARTED
+
+1. Clone the repo into:  
+   `C:\HyperVSecLab\`
+
+2. Download and move ISO files into the `/isos` folder:
+   - `netgate-installer-amd64.iso`
+   - `xubuntu-*.iso`
+
+3. Run:  
+   `build.ps1`  
+   → Choose option to build net-vm (pfSense) and/or inspect-vm base
+
+4. Boot pfSense, complete guided install:
+   - Assign interfaces: WAN (external), LAN (internal)
+   - LAN IP recommended: 10.10.10.1/24
+   - Disable IPv6 (optional)
+   - Enable SSHD via console menu (option 14)
+
+5. From host, run:  
+   `setup.ps1`  
+   → Installs Suricata, Zeek, Tailscale  
+   → Sets up alert forwarders and syncs logs
+
+6. On mobile or external device, install Tailscale app and connect
+   → Route traffic through net-vm
+
+7. To analyze suspicious files:
+   - Run `new-lab.ps1` to spin up inspect-vm
+   - Drop files into sandboxed `transfer-sandbox.vhdx`
+
+8. Logs are synced to:  
+   `transfer/config/logs/`  
+   and alerts forwarded live to your Windows desktop
+
+### 📣 ALERTING & LOGGING
+
+✓ Suricata and Zeek monitor all LAN/VPN traffic  
+✓ Alerts logged and forwarded via:
+   - netvm-alert-forwarder.sh
+   - Windows toast notifications (via `toast-listener.ps1`)
+✓ Logs written to:
+   - `/mnt/transfer-config/logs/suricata/`
+   - `/mnt/transfer-config/logs/zeek/`
+   - `alerts-summary.txt` for daily review
+
+### 🧼 RESETTING THE LAB
+
+Run:
+
+- `burn.ps1 -mode session`  
+  → Destroys only the disposable inspect-vm + session disks
+
+- `burn.ps1 -mode all`  
+  → Wipes net-vm, virtual switches, and resets lab to clean state
+
+-----
+
+For more info, updates, and collaboration, visit:  
+
+📂 https://github.com/edprybylko/HyperVSecLab
+
+Built with 💻 PowerShell, 🔐 pfSense, 🧠 Zeek, 🛡️ Suricata, and ☁️ Tailscale  
+
+Inspired by Qubes OS, brought to your Windows desktop.
