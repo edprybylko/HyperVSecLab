@@ -1,5 +1,4 @@
-
-## HyperVSecLab - Disposable Security Lab
+## HyperVSecLab - Security lab w/ disposable VMs and mobile-device monitoring
 
 A modular, Qubes-inspired virtual lab for Windows 11 using Hyper-V, pfSense, Xubuntu, and Tailscale VPN — designed to sandbox suspicious files, monitor host and mobile network traffic, and forward real-time alerts directly to your Windows desktop.
 
@@ -9,17 +8,25 @@ Built for analysts, homelabbers, and security-conscious users who want hardened 
 
 With built-in support for Tailscale VPN, you can route your phone's traffic through the lab to detect malware behavior, DNS tunneling, C2 beacons, and more using enterprise-grade tools like Suricata and Zeek.
 
+-----
 
 ### 📦 FEATURES
 
 ✓ Disposable inspect-vm for analyzing suspicious files (PDF, DOCX, EXE, etc.)
+
 ✓ Persistent net-vm with pfSense + Suricata + Zeek for deep traffic inspection
+
 ✓ Tailscale VPN support for remote/mobile devices with subnet routing
+
 ✓ Suricata + Zeek detect malicious activity across LAN/VPN
+
 ✓ Real-time alerts sent to Windows via toast notifications
+
 ✓ Transfer.vhdx drive auto-syncs logs and config files between host and VMs
+
 ✓ PowerShell-based automation (build, setup, snapshot, destroy)
 
+-----
 
 ### 🧰 SYSTEM REQUIREMENTS
 
@@ -27,6 +34,8 @@ With built-in support for Tailscale VPN, you can route your phone's traffic thro
 - Surface Pro 9 or similar device with > 8GB RAM
 - Hyper-V Virtualization enabled in BIOS
 - At least 40 GB of free disk space
+
+-----
 
 ### 🧱 REPOSITORY STRUCTURE
 
@@ -50,6 +59,8 @@ C:\HyperVSecLab\
 │   ├── netgate-installer-amd64.iso → pfSense ISO
 │   └── xubuntu-XX.XX-desktop.iso   → Xubuntu ISO (optional minimal/server)
 
+-----
+
 ### 🧩 REQUIRED DOWNLOADS
 
 1. **PuTTY Tools (plink + pscp)**  
@@ -71,6 +82,8 @@ C:\HyperVSecLab\
    Register at: https://tailscale.com  
    - Used to connect your devices (mobile, host, net-vm)
    - Subnet routing enabled through pfSense net-vm
+
+-----
 
 ### 🚀 GETTING STARTED
 
@@ -107,6 +120,8 @@ C:\HyperVSecLab\
    `transfer/config/logs/`  
    and alerts forwarded live to your Windows desktop
 
+-----
+
 ### 📣 ALERTING & LOGGING
 
 ✓ Suricata and Zeek monitor all LAN/VPN traffic  
@@ -117,6 +132,8 @@ C:\HyperVSecLab\
    - `/mnt/transfer-config/logs/suricata/`
    - `/mnt/transfer-config/logs/zeek/`
    - `alerts-summary.txt` for daily review
+
+-----
 
 ### 🧼 RESETTING THE LAB
 
@@ -129,10 +146,6 @@ Run:
   → Wipes net-vm, virtual switches, and resets lab to clean state
 
 -----
-
-For more info, updates, and collaboration, visit:  
-
-📂 https://github.com/edprybylko/HyperVSecLab
 
 Built with 💻 PowerShell, 🔐 pfSense, 🧠 Zeek, 🛡️ Suricata, and ☁️ Tailscale  
 
